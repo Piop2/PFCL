@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "github.com/piop2/pfcl"
 
+func main() {
+	// Decode
 }
