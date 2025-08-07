@@ -1,44 +1,39 @@
 package parser
 
-type Context struct {
-	Data map[string]any
+import (
+	"bufio"
+	"errors"
+	"io"
+)
+
+type context struct {
+	Result map[string]any
 }
 
-func NewContext() *Context {
-	return &Context{Data: map[string]any{}}
+func newContext() *context {
+	return &context{Result: map[string]any{}}
 }
 
-type State interface {
-	SetContext(ctx *Context)
+func Parse(reader *bufio.Reader) (map[string]any, error) {
+	ctx := newContext()
+	state := NewState(ctx)
 
-	Update(
-		token string,
-	) State
-}
+	for {
+		// 글자 단위로 읽기
+		r, _, err := reader.ReadRune()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
 
-func NewState(ctx *Context) *StartState {
-	state := &StartState{}
-	state.SetContext(ctx)
-	return state
-}
+		state = state.Update(string(r))
+	}
 
-type StartState struct {
-	ctx *Context
-}
+	if state.IsParsing() {
+		return nil, errors.New("syntax error")
+	}
 
-func (state *StartState) SetContext(ctx *Context) {
-	state.ctx = ctx
-}
-
-func (state *StartState) Update(token string) State {
-	//TODO implement me
-	panic("implement me")
-}
-
-type EndState struct{}
-
-func (state *EndState) SetContext(_ *Context) {}
-
-func (state *EndState) Update(_ string) State {
-	return state
+	return ctx.Result, nil
 }

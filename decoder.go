@@ -1,25 +1,27 @@
 package pfcl
 
 import (
-	"io"
+	"bufio"
+	"os"
 
 	"github.com/piop2/pfcl/parser"
 )
 
 type Decoder struct {
-	reader io.Reader
+	reader *bufio.Reader
 }
 
-func (receiver *Decoder) Decode() (map[string]any, error) {
-	_ = parser.NewContext()
-
-	//return map[string]any{}, errors.New("not implemented")
-	panic("implement me")
+func (decoder *Decoder) Decode() (map[string]any, error) {
+	return parser.Parse(decoder.reader)
 }
 
-// NewDecoder returns a new Decoder that reads from reader
-func NewDecoder(reader io.Reader) *Decoder {
-	return &Decoder{reader: reader}
+// NewDecoder returns a new Decoder that reads from r
+func NewDecoder(r *bufio.Reader) *Decoder {
+	return &Decoder{reader: r}
+}
+
+func NewDecoderFromFile(f *os.File) *Decoder {
+	return NewDecoder(bufio.NewReader(f))
 }
 
 //func Unmarshal(data []byte) (map[string]any, error) {
