@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/piop2/pfcl"
@@ -20,8 +21,10 @@ func main() {
 
 	decoder := pfcl.NewDecoderFromFile(file)
 
-	_, err = decoder.Decode()
+	data, err := decoder.Decode()
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(data)
 }

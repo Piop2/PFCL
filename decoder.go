@@ -23,7 +23,3 @@ func NewDecoder(r *bufio.Reader) *Decoder {
 func NewDecoderFromFile(f *os.File) *Decoder {
 	return NewDecoder(bufio.NewReader(f))
 }
-
-//func Unmarshal(data []byte) (map[string]any, error) {
-//	return make(map[string]any), errors.New("not implemented")
-//}

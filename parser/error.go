@@ -1,10 +1,7 @@
 package parser
 
-import "fmt"
+import (
+	"errors"
+)
 
-type SyntaxError struct {
-}
-
-func (e *SyntaxError) Error() string {
-	return fmt.Sprintf("Syntax error")
-}
+var ErrSyntax = errors.New("syntax error")

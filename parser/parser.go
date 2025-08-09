@@ -6,29 +6,23 @@ import (
 	"io"
 )
 
-type context struct {
-	Result map[string]any
-}
-
-func newContext() *context {
-	return &context{Result: map[string]any{}}
-}
-
 func Parse(reader *bufio.Reader) (map[string]any, error) {
-	ctx := newContext()
+	ctx := NewContext()
 	state := NewState(ctx)
 
 	for {
-		// 글자 단위로 읽기
 		r, _, err := reader.ReadRune()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
-		state = state.Update(string(r))
+		state, err = state.Update(string(r))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if state.IsParsing() {
