@@ -63,18 +63,23 @@ func (s *TableState) SetContext(ctx *Context) {
 func (s *TableState) SetOnComplete(_ func(result any)) {}
 
 func (s *TableState) Update(token string) (State, error) {
+	if token == " " || token == "\n" {
+		return nil, ErrSyntax
+	}
+
 	if token == "]" {
 		if s.key == "" {
 			return nil, ErrSyntax
 		}
 
-		table := s.ctx.Result
-		for _, key := range s.keyQueue {
-			if nested, ok := table[key].(map[string]any); ok {
-				table = nested
-			} else {
-				return nil, errors.New("table name error")
-			}
+		tableAny, err := s.ctx.ValueAtCursor(s.keyQueue)
+		if err != nil {
+			return nil, err
+		}
+
+		table, ok := tableAny.(map[string]any)
+		if !ok {
+			return nil, errors.New("unexpected type")
 		}
 
 		if table[s.key] != nil {
@@ -82,6 +87,9 @@ func (s *TableState) Update(token string) (State, error) {
 		}
 
 		table[s.key] = map[string]any{}
+
+		s.ctx.cursor = append(s.keyQueue, s.key)
+
 		return &ReadyState{ctx: s.ctx}, nil
 	}
 
