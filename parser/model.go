@@ -1,23 +1,25 @@
 package parser
 
-import "errors"
+import (
+	"errors"
+)
 
 type Context struct {
 	Result     map[string]any
-	stateStack []State
-	cursor     []string
+	StateStack []State
+	Cursor     []string
 }
 
 func NewContext() *Context {
 	return &Context{
 		Result:     map[string]any{},
-		stateStack: []State{},
-		cursor:     []string{},
+		StateStack: []State{},
+		Cursor:     []string{},
 	}
 }
 
 func (c *Context) Value() (any, error) {
-	return c.ValueAtCursor(c.cursor)
+	return c.ValueAtCursor(c.Cursor)
 }
 
 func (c *Context) ValueAtCursor(cursor []string) (any, error) {
@@ -30,4 +32,21 @@ func (c *Context) ValueAtCursor(cursor []string) (any, error) {
 		}
 	}
 	return value, nil
+}
+
+type State interface {
+	SetContext(ctx *Context)
+	SetOnComplete(f func(result any))
+
+	Update(
+		token string,
+	) (State, error)
+
+	IsParsing() bool
+}
+
+func NewState(ctx *Context) State {
+	s := ReadyState{}
+	s.SetContext(ctx)
+	return &s
 }
