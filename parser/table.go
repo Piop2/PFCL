@@ -15,7 +15,7 @@ func (s *TableState) SetContext(ctx *Context) {
 	return
 }
 
-func (s *TableState) SetOnComplete(_ func(result any)) {}
+func (s *TableState) SetOnComplete(_ onCompleteCallback) {}
 
 func (s *TableState) Update(token string) (State, error) {
 	if token == " " || token == "\n" {

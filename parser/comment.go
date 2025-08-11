@@ -9,7 +9,7 @@ func (s *CommentState) SetContext(ctx *Context) {
 	return
 }
 
-func (s *CommentState) SetOnComplete(_ func(result any)) {}
+func (s *CommentState) SetOnComplete(_ onCompleteCallback) {}
 
 func (s *CommentState) Update(token string) (State, error) {
 	if token != "\n" {

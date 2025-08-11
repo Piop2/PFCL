@@ -4,7 +4,7 @@ type ReadyState struct {
 	ctx *Context
 }
 
-func (s *ReadyState) SetOnComplete(_ func(result any)) {}
+func (s *ReadyState) SetOnComplete(_ onCompleteCallback) {}
 
 func (s *ReadyState) SetContext(ctx *Context) {
 	s.ctx = ctx

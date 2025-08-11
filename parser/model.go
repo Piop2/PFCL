@@ -34,9 +34,11 @@ func (c *Context) ValueAtCursor(cursor []string) (any, error) {
 	return value, nil
 }
 
+type onCompleteCallback func(result any)
+
 type State interface {
 	SetContext(ctx *Context)
-	SetOnComplete(f func(result any))
+	SetOnComplete(f onCompleteCallback)
 
 	Update(
 		token string,
