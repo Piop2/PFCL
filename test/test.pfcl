@@ -1,3 +1,5 @@
-[server]
+# This is Comment
+
+[server] # This is Table
 [server.beta]
 [server.alpha]

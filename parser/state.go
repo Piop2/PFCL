@@ -39,9 +39,14 @@ func (s *ReadyState) Update(token string) (State, error) {
 
 	var state State = s
 	if token == "[" {
-		state = &TableState{ctx: s.ctx}
+		state = &TableState{}
 	}
 
+	if token == "#" {
+		state = &CommentState{}
+	}
+
+	state.SetContext(s.ctx)
 	return state, nil
 }
 
@@ -108,5 +113,27 @@ func (s *TableState) Update(token string) (State, error) {
 }
 
 func (s *TableState) IsParsing() bool {
+	return true
+}
+
+type CommentState struct {
+	ctx *Context
+}
+
+func (s *CommentState) SetContext(ctx *Context) {
+	s.ctx = ctx
+	return
+}
+
+func (s *CommentState) SetOnComplete(f func(result any)) {}
+
+func (s *CommentState) Update(token string) (State, error) {
+	if token != "\n" {
+		return s, nil
+	}
+	return &ReadyState{ctx: s.ctx}, nil
+}
+
+func (s *CommentState) IsParsing() bool {
 	return true
 }
