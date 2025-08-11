@@ -2,6 +2,7 @@ package pfcl
 
 import (
 	"bufio"
+	"io"
 	"os"
 
 	"github.com/piop2/pfcl/parser"
@@ -16,10 +17,10 @@ func (decoder *Decoder) Decode() (map[string]any, error) {
 }
 
 // NewDecoder returns a new Decoder that reads from r
-func NewDecoder(r *bufio.Reader) *Decoder {
-	return &Decoder{reader: r}
+func NewDecoder(r io.Reader) *Decoder {
+	return &Decoder{reader: bufio.NewReader(r)}
 }
 
 func NewDecoderFromFile(f *os.File) *Decoder {
-	return NewDecoder(bufio.NewReader(f))
+	return NewDecoder(f)
 }
