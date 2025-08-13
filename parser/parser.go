@@ -2,11 +2,10 @@ package parser
 
 import (
 	"bufio"
-	"errors"
 	"io"
 )
 
-func Parse(reader *bufio.Reader) (map[string]any, error) {
+func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 	ctx := NewContext()
 	state := NewState(ctx)
 
@@ -19,14 +18,21 @@ func Parse(reader *bufio.Reader) (map[string]any, error) {
 			return nil, err
 		}
 
-		state, err = state.Update(string(r))
+		next, isProcessed, err := state.Process(string(r))
 		if err != nil {
 			return nil, err
 		}
+
+		// unread the last rune when it was not processed
+		if !isProcessed {
+			_ = reader.UnreadRune()
+		}
+		state = next
 	}
 
+	// unexpected EOF during parsing
 	if state.IsParsing() {
-		return nil, errors.New("syntax error")
+		return nil, ErrSyntax
 	}
 
 	return ctx.Result, nil

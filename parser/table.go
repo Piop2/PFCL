@@ -1,13 +1,9 @@
 package parser
 
-import (
-	"errors"
-)
-
 type TableState struct {
-	ctx      *Context
-	key      string
-	keyQueue []string
+	ctx       *Context
+	name      string
+	nameStack Stack[string]
 }
 
 func (s *TableState) SetContext(ctx *Context) {
@@ -17,49 +13,48 @@ func (s *TableState) SetContext(ctx *Context) {
 
 func (s *TableState) SetOnComplete(_ onCompleteCallback) {}
 
-func (s *TableState) Update(token string) (State, error) {
+func (s *TableState) Process(token string) (next State, isProcessed bool, err error) {
+	// Ignore spaces and newline characters
 	if token == " " || token == "\n" {
-		return nil, ErrSyntax
+		return s, true, nil
 	}
 
+	// the end of table declaration
 	if token == "]" {
-		if s.key == "" {
-			return nil, ErrSyntax
+		// table declaration closed without a name
+		if s.name == "" {
+			return nil, true, ErrSyntax
 		}
 
-		tableAny, err := s.ctx.ValueAtCursor(s.keyQueue)
+		if s.nameStack.data == nil {
+			s.nameStack.data = []string{}
+		}
+
+		table, err := s.ctx.TableAtCursor(s.nameStack.data)
 		if err != nil {
-			return nil, err
+			return nil, true, err
 		}
 
-		table, ok := tableAny.(map[string]any)
-		if !ok {
-			return nil, errors.New("unexpected type")
+		// make new table
+		table[s.name] = map[string]any{}
+
+		// set cursor
+		s.ctx.Cursor = append(s.nameStack.data, s.name)
+
+		return &ReadyState{ctx: s.ctx}, true, nil
+
+	} else if token == "." {
+		if s.name == "" {
+			return nil, true, ErrSyntax
 		}
 
-		if table[s.key] != nil {
-			return nil, errors.New("duplicate error")
-		}
-
-		table[s.key] = map[string]any{}
-
-		s.ctx.Cursor = append(s.keyQueue, s.key)
-
-		return &ReadyState{ctx: s.ctx}, nil
+		s.nameStack.Push(s.name)
+		s.name = ""
+		return s, true, nil
 	}
 
-	if token == "." {
-		if s.key == "" {
-			return nil, ErrSyntax
-		}
-
-		s.keyQueue = append(s.keyQueue, s.key)
-		s.key = ""
-		return s, nil
-	}
-
-	s.key += token
-	return s, nil
+	s.name += token
+	return s, true, nil
 }
 
 func (s *TableState) IsParsing() bool {

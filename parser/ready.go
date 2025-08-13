@@ -11,22 +11,24 @@ func (s *ReadyState) SetContext(ctx *Context) {
 	return
 }
 
-func (s *ReadyState) Update(token string) (State, error) {
-	if token == " " || token == "\n" {
-		return s, nil
+func (s *ReadyState) Process(token string) (next State, isProcessed bool, err error) {
+	// Ignore spaces and newline characters
+	if token == " " || token == "\n" || token == "\r" {
+		return s, true, nil
 	}
 
-	var state State = s
+	//next = s
 	if token == "[" {
-		state = &TableState{}
+		next = &TableState{}
+		isProcessed = true
+
+	} else if token == "#" {
+		next = &CommentState{}
+		isProcessed = true
 	}
 
-	if token == "#" {
-		state = &CommentState{}
-	}
-
-	state.SetContext(s.ctx)
-	return state, nil
+	next.SetContext(s.ctx)
+	return
 }
 
 func (s *ReadyState) IsParsing() bool {

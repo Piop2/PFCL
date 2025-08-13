@@ -40,20 +40,20 @@ func NewContext() *Context {
 	}
 }
 
-func (c *Context) Value() (map[string]any, error) {
-	return c.ValueAtCursor(c.Cursor)
+func (c *Context) Table() (table map[string]any, err error) {
+	return c.TableAtCursor(c.Cursor)
 }
 
-func (c *Context) ValueAtCursor(cursor []string) (map[string]any, error) {
-	value := c.Result
+func (c *Context) TableAtCursor(cursor []string) (table map[string]any, err error) {
+	table = c.Result
 	for _, key := range cursor {
-		if nested, ok := value[key].(map[string]any); ok {
-			value = nested
+		if nested, ok := table[key].(map[string]any); ok {
+			table = nested
 		} else {
-			return nil, errors.New("key error")
+			return nil, errors.New("table name error")
 		}
 	}
-	return value, nil
+	return
 }
 
 type onCompleteCallback func(result any)
@@ -62,9 +62,9 @@ type State interface {
 	SetContext(ctx *Context)
 	SetOnComplete(f onCompleteCallback)
 
-	Update(
+	Process(
 		token string,
-	) (State, error)
+	) (next State, isProcessed bool, err error)
 
 	IsParsing() bool
 }

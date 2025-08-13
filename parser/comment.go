@@ -11,11 +11,11 @@ func (s *CommentState) SetContext(ctx *Context) {
 
 func (s *CommentState) SetOnComplete(_ onCompleteCallback) {}
 
-func (s *CommentState) Update(token string) (State, error) {
+func (s *CommentState) Process(token string) (next State, isProcessed bool, err error) {
 	if token != "\n" {
-		return s, nil
+		return s, true, nil
 	}
-	return &ReadyState{ctx: s.ctx}, nil
+	return &ReadyState{ctx: s.ctx}, true, nil
 }
 
 func (s *CommentState) IsParsing() bool {
