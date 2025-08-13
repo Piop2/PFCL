@@ -13,7 +13,7 @@ func (s *TableState) SetContext(ctx *Context) {
 
 func (s *TableState) SetOnComplete(_ onCompleteCallback) {}
 
-func (s *TableState) Process(token string) (next State, isProcessed bool, err error) {
+func (s *TableState) Process(token string) (next State, isProcessed bool, err ErrPFCL) {
 	// Ignore spaces and newline characters
 	if token == " " || token == "\n" {
 		return s, true, nil
@@ -23,7 +23,7 @@ func (s *TableState) Process(token string) (next State, isProcessed bool, err er
 	if token == "]" {
 		// table declaration closed without a name
 		if s.name == "" {
-			return nil, true, ErrSyntax
+			return nil, true, &ErrSyntax{Message: "missing table name"}
 		}
 
 		if s.nameStack.data == nil {
@@ -32,7 +32,7 @@ func (s *TableState) Process(token string) (next State, isProcessed bool, err er
 
 		table, err := s.ctx.TableAtCursor(s.nameStack.data)
 		if err != nil {
-			return nil, true, err
+			return nil, true, ToErrPFCL(err)
 		}
 
 		// make new table
@@ -45,7 +45,7 @@ func (s *TableState) Process(token string) (next State, isProcessed bool, err er
 
 	} else if token == "." {
 		if s.name == "" {
-			return nil, true, ErrSyntax
+			return nil, true, &ErrSyntax{Message: "invalid table key: consecutive dots"}
 		}
 
 		s.nameStack.Push(s.name)

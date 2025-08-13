@@ -64,7 +64,7 @@ type State interface {
 
 	Process(
 		token string,
-	) (next State, isProcessed bool, err error)
+	) (next State, isProcessed bool, err ErrPFCL)
 
 	IsParsing() bool
 }

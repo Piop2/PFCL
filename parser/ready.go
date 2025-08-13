@@ -11,7 +11,7 @@ func (s *ReadyState) SetContext(ctx *Context) {
 	return
 }
 
-func (s *ReadyState) Process(token string) (next State, isProcessed bool, err error) {
+func (s *ReadyState) Process(token string) (next State, isProcessed bool, err ErrPFCL) {
 	// Ignore spaces and newline characters
 	if token == " " || token == "\n" || token == "\r" {
 		return s, true, nil
