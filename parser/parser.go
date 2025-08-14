@@ -26,7 +26,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 			col++
 		}
 
-		next, isProcessed, stateErr := state.Process(string(r))
+		next, isProcessed, stateErr := state.Process(r)
 		if stateErr != nil {
 			stateErr.SetPos(line, col)
 			return nil, stateErr

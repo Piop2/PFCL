@@ -63,7 +63,7 @@ type State interface {
 	SetOnComplete(f onCompleteCallback)
 
 	Process(
-		token string,
+		token rune,
 	) (next State, isProcessed bool, err ErrPFCL)
 
 	IsParsing() bool

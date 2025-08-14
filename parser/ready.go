@@ -11,18 +11,18 @@ func (s *ReadyState) SetContext(ctx *Context) {
 	return
 }
 
-func (s *ReadyState) Process(token string) (next State, isProcessed bool, err ErrPFCL) {
+func (s *ReadyState) Process(token rune) (next State, isProcessed bool, err ErrPFCL) {
 	// Ignore spaces and newline characters
-	if token == " " || token == "\n" || token == "\r" {
+	if token == ' ' || token == '\n' || token == '\r' {
 		return s, true, nil
 	}
 
 	//next = s
-	if token == "[" {
+	if token == '[' {
 		next = &TableState{}
 		isProcessed = true
 
-	} else if token == "#" {
+	} else if token == '#' {
 		next = &CommentState{}
 		isProcessed = true
 	}

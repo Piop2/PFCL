@@ -11,8 +11,8 @@ func (s *CommentState) SetContext(ctx *Context) {
 
 func (s *CommentState) SetOnComplete(_ onCompleteCallback) {}
 
-func (s *CommentState) Process(token string) (next State, isProcessed bool, err ErrPFCL) {
-	if token != "\n" {
+func (s *CommentState) Process(token rune) (next State, isProcessed bool, err ErrPFCL) {
+	if token != '\n' {
 		return s, true, nil
 	}
 	return &ReadyState{ctx: s.ctx}, true, nil
