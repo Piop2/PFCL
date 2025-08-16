@@ -3,11 +3,14 @@ package parser
 import (
 	"bufio"
 	"io"
+
+	"github.com/piop2/pfcl/internal/parser/shared"
+	"github.com/piop2/pfcl/internal/parser/state"
 )
 
 func Parse(reader *bufio.Reader) (data map[string]any, err error) {
-	ctx := NewContext()
-	state := NewState(ctx)
+	ctx := shared.NewContext()
+	currentState := state.NewState(ctx)
 
 	line, col := 1, 0
 	for {
@@ -26,7 +29,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 			col++
 		}
 
-		next, isProcessed, stateErr := state.Process(r)
+		next, isProcessed, stateErr := currentState.Process(r)
 		if stateErr != nil {
 			stateErr.SetPos(line, col)
 			return nil, stateErr
@@ -36,12 +39,12 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		if !isProcessed {
 			_ = reader.UnreadRune()
 		}
-		state = next
+		currentState = next
 	}
 
 	// unexpected EOF during parsing
-	if state.IsParsing() {
-		return nil, &ErrSyntax{Message: "unexpected EOF"}
+	if currentState.IsParsing() {
+		return nil, &shared.ErrSyntax{Message: "unexpected EOF"}
 	}
 
 	return ctx.Result, nil

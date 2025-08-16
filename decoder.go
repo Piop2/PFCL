@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/piop2/pfcl/parser"
+	"github.com/piop2/pfcl/internal/parser"
 )
 
 type Decoder struct {

@@ -1,19 +1,23 @@
-package parser
+package state
 
-import "fmt"
+import (
+	"fmt"
+
+	common2 "github.com/piop2/pfcl/internal/parser/shared"
+)
 
 type ReadyState struct {
-	ctx *Context
+	ctx *common2.Context
 }
 
-func (s *ReadyState) SetOnComplete(_ onCompleteCallback) {}
-
-func (s *ReadyState) SetContext(ctx *Context) {
+func (s *ReadyState) SetContext(ctx *common2.Context) {
 	s.ctx = ctx
 	return
 }
 
-func (s *ReadyState) Process(token rune) (next State, isProcessed bool, err ErrPFCL) {
+func (s *ReadyState) SetOnComplete(_ common2.OnCompleteCallback) {}
+
+func (s *ReadyState) Process(token rune) (next common2.State, isProcessed bool, err common2.ErrPFCL) {
 	// Ignore spaces and newline characters
 	if token == ' ' || token == '\n' || token == '\r' {
 		return s, true, nil
@@ -27,13 +31,13 @@ func (s *ReadyState) Process(token rune) (next State, isProcessed bool, err ErrP
 		next = &CommentState{}
 		isProcessed = true
 
-	} else if isAsciiLetter(token) {
+	} else if common2.IsAsciiLetter(token) {
 		//next =
 		isProcessed = false
 
 	} else {
 		// ERROR!
-		err = &ErrSyntax{
+		err = &common2.ErrSyntax{
 			Message: fmt.Sprintf("unexpected character: \"%s\"", string(token)),
 		}
 		return
