@@ -45,7 +45,8 @@ func (s *TableState) Process(token rune) (next common2.State, isProcessed bool, 
 		// set cursor
 		s.ctx.Cursor = append(s.nameStack.Data, s.name)
 
-		return &ReadyState{ctx: s.ctx}, true, nil
+		next, _ = s.ctx.StateStack.Pop()
+		return next, true, nil
 
 	} else if token == '.' {
 		if s.name == "" {

@@ -19,7 +19,9 @@ func (s *CommentState) Process(token rune) (next common2.State, isProcessed bool
 	if token != '\n' {
 		return s, true, nil
 	}
-	return &ReadyState{ctx: s.ctx}, true, nil
+
+	next, _ = s.ctx.StateStack.Pop()
+	return next, true, nil
 }
 
 func (s *CommentState) IsParsing() bool {

@@ -23,6 +23,8 @@ func (s *ReadyState) Process(token rune) (next common2.State, isProcessed bool, 
 		return s, true, nil
 	}
 
+	s.ctx.StateStack.Push(s)
+
 	if token == '[' {
 		next = &TableState{}
 		isProcessed = true
@@ -32,7 +34,7 @@ func (s *ReadyState) Process(token rune) (next common2.State, isProcessed bool, 
 		isProcessed = true
 
 	} else if common2.IsAsciiLetter(token) {
-		//next =
+		//next = &ItemState{} <--- Implement please
 		isProcessed = false
 
 	} else {
