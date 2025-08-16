@@ -1,10 +1,10 @@
 package state
 
 import (
-	common2 "github.com/piop2/pfcl/internal/parser/shared"
+	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
-func NewState(ctx *common2.Context) common2.State {
+func NewState(ctx *shared.Context) shared.State {
 	s := ReadyState{}
 	s.SetContext(ctx)
 	return &s

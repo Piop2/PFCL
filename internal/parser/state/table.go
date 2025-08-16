@@ -1,23 +1,23 @@
 package state
 
 import (
-	common2 "github.com/piop2/pfcl/internal/parser/shared"
+	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
 type TableState struct {
-	ctx       *common2.Context
+	ctx       *shared.Context
 	name      string
-	nameStack common2.Stack[string]
+	nameStack shared.Stack[string]
 }
 
-func (s *TableState) SetContext(ctx *common2.Context) {
+func (s *TableState) SetContext(ctx *shared.Context) {
 	s.ctx = ctx
 	return
 }
 
-func (s *TableState) SetOnComplete(_ common2.OnCompleteCallback) {}
+func (s *TableState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *TableState) Process(token rune) (next common2.State, isProcessed bool, err common2.ErrPFCL) {
+func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// Ignore spaces and newline characters
 	if token == ' ' || token == '\n' {
 		return s, true, nil
@@ -27,7 +27,7 @@ func (s *TableState) Process(token rune) (next common2.State, isProcessed bool, 
 	if token == ']' {
 		// table declaration closed without a name
 		if s.name == "" {
-			return nil, true, &common2.ErrSyntax{Message: "missing table name"}
+			return nil, true, &shared.ErrSyntax{Message: "missing table name"}
 		}
 
 		if s.nameStack.Data == nil {
@@ -36,7 +36,7 @@ func (s *TableState) Process(token rune) (next common2.State, isProcessed bool, 
 
 		table, err := s.ctx.TableAtCursor(s.nameStack.Data)
 		if err != nil {
-			return nil, true, common2.ToErrPFCL(err)
+			return nil, true, shared.ToErrPFCL(err)
 		}
 
 		// make new table
@@ -50,7 +50,7 @@ func (s *TableState) Process(token rune) (next common2.State, isProcessed bool, 
 
 	} else if token == '.' {
 		if s.name == "" {
-			return nil, true, &common2.ErrSyntax{Message: "invalid table key: consecutive dots"}
+			return nil, true, &shared.ErrSyntax{Message: "invalid table key: consecutive dots"}
 		}
 
 		s.nameStack.Push(s.name)

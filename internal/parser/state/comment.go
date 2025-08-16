@@ -1,21 +1,21 @@
 package state
 
 import (
-	common2 "github.com/piop2/pfcl/internal/parser/shared"
+	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
 type CommentState struct {
-	ctx *common2.Context
+	ctx *shared.Context
 }
 
-func (s *CommentState) SetContext(ctx *common2.Context) {
+func (s *CommentState) SetContext(ctx *shared.Context) {
 	s.ctx = ctx
 	return
 }
 
-func (s *CommentState) SetOnComplete(_ common2.OnCompleteCallback) {}
+func (s *CommentState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *CommentState) Process(token rune) (next common2.State, isProcessed bool, err common2.ErrPFCL) {
+func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	if token != '\n' {
 		return s, true, nil
 	}
