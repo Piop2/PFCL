@@ -1,5 +1,7 @@
 package parser
 
+import "fmt"
+
 type ReadyState struct {
 	ctx *Context
 }
@@ -17,7 +19,6 @@ func (s *ReadyState) Process(token rune) (next State, isProcessed bool, err ErrP
 		return s, true, nil
 	}
 
-	//next = s
 	if token == '[' {
 		next = &TableState{}
 		isProcessed = true
@@ -25,6 +26,17 @@ func (s *ReadyState) Process(token rune) (next State, isProcessed bool, err ErrP
 	} else if token == '#' {
 		next = &CommentState{}
 		isProcessed = true
+
+	} else if isAsciiLetter(token) {
+		//next =
+		isProcessed = false
+
+	} else {
+		// ERROR!
+		err = &ErrSyntax{
+			Message: fmt.Sprintf("unexpected character: \"%s\"", string(token)),
+		}
+		return
 	}
 
 	next.SetContext(s.ctx)
