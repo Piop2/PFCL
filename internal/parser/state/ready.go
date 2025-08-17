@@ -34,13 +34,13 @@ func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, e
 		isProcessed = true
 
 	} else if shared.IsAsciiLetter(token) {
-		//next = &ItemState{} <--- Implement please
+		next = &ItemState{}
 		isProcessed = false
 
 	} else {
 		// ERROR!
 		err = &shared.ErrSyntax{
-			Message: fmt.Sprintf("unexpected character: \"%s\"", string(token)),
+			Message: fmt.Sprintf("unexpected token: \"%s\"", string(token)),
 		}
 		return
 	}
