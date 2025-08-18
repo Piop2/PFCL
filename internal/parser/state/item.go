@@ -22,10 +22,10 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 	if s.key != "" { // && s.value != nil
 		table, err := s.ctx.Table()
 		if err != nil {
-			return nil, false, shared.ToErrPFCL(err)
+			return nil, true, shared.ToErrPFCL(err)
 		}
 
-		//table[s.key] = s.value
+		//table[s.result] = s.value
 		table[s.key] = "BOINK"
 
 		next, _ = s.ctx.StateStack.Pop()
@@ -34,10 +34,9 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 
 	s.ctx.StateStack.Push(s)
 
-	//Process KeyState ValueState
+	// result
 	if s.key == "" {
 		next = &KeyState{}
-		isProcessed = false
 		next.SetOnComplete(func(result any) {
 			key, ok := result.(string)
 			if !ok {
@@ -49,8 +48,13 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 		})
 	}
 
+	// value
+	//if s.value == nil {
+	//
+	//}
+
 	next.SetContext(s.ctx)
-	return
+	return next, false, nil
 }
 
 func (s *ItemState) IsParsing() bool {

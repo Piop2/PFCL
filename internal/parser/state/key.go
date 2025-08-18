@@ -10,7 +10,8 @@ type KeyState struct {
 	ctx        *shared.Context
 	onComplete shared.OnCompleteCallback
 
-	key string
+	// key name
+	result string
 }
 
 func (s *KeyState) SetContext(ctx *shared.Context) {
@@ -31,26 +32,26 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 
 	if !shared.IsAsciiLetter(token) && !shared.IsAsciiDigit(token) && token != '=' {
 		err = &shared.ErrSyntax{
-			Message: fmt.Sprintf("unexpected key token: %s", string(token)),
+			Message: fmt.Sprintf("unexpected result token: %s", string(token)),
 		}
 		return
 	}
 
-	// commit key
+	// commit result
 	if token == '=' {
-		if s.key == "" {
+		if s.result == "" {
 			err = &shared.ErrSyntax{
 				Message: "wat is this",
 			}
 		}
 
-		s.onComplete(s.key)
+		s.onComplete(s.result)
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
 	}
 
-	s.key += string(token)
+	s.result += string(token)
 	return s, true, nil
 }
 

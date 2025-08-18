@@ -50,7 +50,7 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 
 	} else if token == '.' {
 		if s.name == "" {
-			return nil, true, &shared.ErrSyntax{Message: "invalid table key: consecutive dots"}
+			return nil, true, &shared.ErrSyntax{Message: "invalid table result: consecutive dots"}
 		}
 
 		s.nameStack.Push(s.name)
