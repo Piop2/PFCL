@@ -2,12 +2,15 @@ package shared
 
 import "fmt"
 
+// ErrPFCL is the common interface for all PFCL errors.
 type ErrPFCL interface {
 	SetMessage(message string)
 	SetPos(line int, col int)
 	Error() string
 }
 
+// ToErrPFCL converts a standard error into an ErrPFCL.
+// Returns nil if input error is nil.
 func ToErrPFCL(err error) ErrPFCL {
 	if err == nil {
 		return nil
@@ -15,6 +18,7 @@ func ToErrPFCL(err error) ErrPFCL {
 	return &BaseErr{Message: err.Error()}
 }
 
+// BaseErr is a basic implementation of ErrPFCL.
 type BaseErr struct {
 	Pos     [2]int
 	Message string
@@ -26,6 +30,7 @@ func (e *BaseErr) Error() string {
 	return fmt.Sprintf("[%d:%d] %s", e.Pos[0], e.Pos[1], e.Message)
 }
 
+// ErrSyntax represents a syntax error in parsing.
 type ErrSyntax struct {
 	Pos     [2]int
 	Message string
