@@ -19,14 +19,13 @@ func (s *ItemState) SetContext(ctx *shared.Context) {
 func (s *ItemState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
 func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
-	if s.key != "" { // && s.value != nil
+	if s.key != "" && s.value != nil {
 		table, err := s.ctx.Table()
 		if err != nil {
 			return nil, true, shared.ToErrPFCL(err)
 		}
 
-		//table[s.result] = s.value
-		table[s.key] = "BOINK"
+		table[s.key] = s.value
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, false, nil
@@ -34,8 +33,7 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 
 	s.ctx.StateStack.Push(s)
 
-	// result
-	if s.key == "" {
+	if s.key == "" { // key
 		next = &KeyState{}
 		next.SetOnComplete(func(result any) {
 			key, ok := result.(string)
@@ -46,12 +44,13 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 			s.key = key
 			return
 		})
+	} else if s.value == nil { // value
+		next = &ValueState{}
+		next.SetOnComplete(func(result any) {
+			s.value = result
+			return
+		})
 	}
-
-	// value
-	//if s.value == nil {
-	//
-	//}
 
 	next.SetContext(s.ctx)
 	return next, false, nil

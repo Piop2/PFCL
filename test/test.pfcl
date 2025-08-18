@@ -1,5 +1,12 @@
 # This is Comment
-a =
+
+str = "BOINK" # This is string
+
 [server] # This is Table
+ip = "127.0.0.1:3000"
+
 [server.beta]
+ip = "127.0.0.1:5000"
+
 [server.alpha]
+ip = "127.0.0.1:8000"
