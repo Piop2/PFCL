@@ -55,6 +55,11 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 	return s, true, nil
 }
 
+func (s *KeyState) Flush() (next shared.State, err shared.ErrPFCL) {
+	next, _, err = s.Process(0) // give empty rune
+	return
+}
+
 func (s *KeyState) IsParsing() bool {
 	return true
 }

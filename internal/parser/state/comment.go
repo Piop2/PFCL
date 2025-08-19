@@ -24,6 +24,11 @@ func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool,
 	return next, true, nil
 }
 
+func (s *CommentState) Flush() (next shared.State, err shared.ErrPFCL) {
+	next, _, err = s.Process(0) // give empty rune
+	return
+}
+
 func (s *CommentState) IsParsing() bool {
 	return true
 }

@@ -42,6 +42,18 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		currentState = next
 	}
 
+	// handle case: file ends with '"' (no trailing \r, \n, or space)
+	// flush remaining states when stack is empty
+	for !ctx.StateStack.IsEmpty() {
+		next, err := currentState.Flush()
+		if err != nil {
+			err.SetPos(line, col)
+			return nil, err
+		}
+
+		currentState = next
+	}
+
 	// unexpected EOF during parsing
 	if currentState.IsParsing() {
 		return nil, &shared.ErrSyntax{Message: "unexpected EOF"}

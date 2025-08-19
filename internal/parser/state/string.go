@@ -44,6 +44,11 @@ func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, 
 	return s, true, nil
 }
 
+func (s *StringState) Flush() (next shared.State, err shared.ErrPFCL) {
+	next, _, err = s.Process(0) // give empty rune
+	return
+}
+
 func (s *StringState) IsParsing() bool {
 	return true
 }

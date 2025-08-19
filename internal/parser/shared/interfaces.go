@@ -13,6 +13,10 @@ type State interface {
 	// Process handles a token and returns next state, whether it was processed, and any error.
 	Process(token rune) (next State, isProcessed bool, err ErrPFCL)
 
+	// Flush finalizes the state at EOF,
+	// e.g. when input ends without a trailing delimiter.
+	Flush() (next State, err ErrPFCL)
+
 	// IsParsing returns true if the state is actively parsing.
 	IsParsing() bool
 }

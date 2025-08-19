@@ -56,6 +56,11 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 	return next, false, nil
 }
 
+func (s *ItemState) Flush() (next shared.State, err shared.ErrPFCL) {
+	next, _, err = s.Process(0) // give empty rune
+	return
+}
+
 func (s *ItemState) IsParsing() bool {
 	return true
 }
