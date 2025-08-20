@@ -37,9 +37,16 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 		return s, true, nil
 	}
 
-	// string value
 	if token == '"' {
+		// string value
 		next = &StringState{}
+		isProcessed = true
+
+	} else if token == 't' || token == 'f' {
+		// bool value
+		next = &BoolState{}
+		isProcessed = false
+
 	} else {
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected token: %s", string(token)),
@@ -55,7 +62,7 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 		return
 	})
 
-	return next, true, nil
+	return next, isProcessed, nil
 }
 
 func (s *ValueState) Flush() (next shared.State, err shared.ErrPFCL) {

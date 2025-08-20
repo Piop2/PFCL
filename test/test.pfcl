@@ -1,6 +1,7 @@
 # This is Comment
 
 str = "BOINK" # This is string
+cool = true # ddd
 
 [server] # This is Table
 ip = "127.0.0.1:3000"

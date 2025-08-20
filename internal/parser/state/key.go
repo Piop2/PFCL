@@ -34,7 +34,7 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected result token: %s", string(token)),
 		}
-		return
+		return nil, true, err
 	}
 
 	// commit result
