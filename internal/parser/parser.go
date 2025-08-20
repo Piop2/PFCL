@@ -42,7 +42,6 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		currentState = next
 	}
 
-	// handle case: file ends with '"' (no trailing \r, \n, or space)
 	// flush remaining states when stack is empty
 	for !ctx.StateStack.IsEmpty() {
 		next, err := currentState.Flush()

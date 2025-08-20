@@ -30,10 +30,6 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 			return nil, true, &shared.ErrSyntax{Message: "missing table name"}
 		}
 
-		if s.nameStack.Data == nil {
-			s.nameStack.Data = []string{}
-		}
-
 		table, err := s.ctx.TableAtCursor(s.nameStack.Data)
 		if err != nil {
 			return nil, true, shared.ToErrPFCL(err)

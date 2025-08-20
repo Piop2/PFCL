@@ -4,7 +4,7 @@ import "errors"
 
 // Context holds parsing results, state stack, and the current cursor path.
 type Context struct {
-	Result     map[string]any // Parsed data as nested tables
+	Result     map[string]any // Parsed Data as nested tables
 	StateStack Stack[State]   // Stack of active states
 	Cursor     []string       // Current table path
 }
