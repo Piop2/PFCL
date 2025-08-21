@@ -28,11 +28,6 @@ func (s *BoolState) SetOnComplete(f shared.OnCompleteCallback) {
 }
 
 func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
-	// TODO true와 false를 어떻게 구분할까
-	//		1. target변수 설정, if문으로 확인 <-- 일단 이걸로 해볼게요
-	//		2. substate로 편하게 처리( 코드양 좀 늘어남 )
-
-	// 1번 구현
 	if !s.isChecking {
 		s.isChecking = true
 
