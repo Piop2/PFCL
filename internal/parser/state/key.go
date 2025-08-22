@@ -43,6 +43,15 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 			err = &shared.ErrSyntax{
 				Message: "wat is this",
 			}
+			return nil, true, err
+		}
+
+		table, _ := s.ctx.Table()
+		if table[s.result] != nil {
+			err = &shared.ErrSyntax{
+				Message: fmt.Sprintf("duplicate key \"%s\"", s.result),
+			}
+			return nil, true, err
 		}
 
 		s.onComplete(s.result)
