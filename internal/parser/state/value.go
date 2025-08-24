@@ -47,6 +47,11 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 		next = &BoolState{}
 		isProcessed = false
 
+	} else if shared.IsAsciiDigit(token) {
+		// number value
+		next = &NumberState{}
+		isProcessed = false
+
 	} else {
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected token: %s", string(token)),
