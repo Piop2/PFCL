@@ -19,8 +19,7 @@ func (s *ReadyState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
 func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// Ignore spaces and newline characters
-	if shared.IsWhitespace(token) ||
-		shared.IsNewline(token) {
+	if shared.IsWhitespace(token) {
 		return s, true, nil
 	}
 

@@ -33,7 +33,7 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 	}
 
 	// Ignore spaces
-	if token == ' ' {
+	if shared.IsSpace(token) {
 		return s, true, nil
 	}
 

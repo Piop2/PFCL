@@ -26,7 +26,7 @@ func (s *KeyState) SetOnComplete(f shared.OnCompleteCallback) {
 
 func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// Ignore spaces
-	if shared.IsWhitespace(token) {
+	if shared.IsSpace(token) {
 		return s, true, nil
 	}
 

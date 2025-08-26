@@ -36,7 +36,6 @@ func (s *NumberState) SetOnComplete(f shared.OnCompleteCallback) {
 func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// commit
 	if shared.IsWhitespace(token) ||
-		shared.IsNewline(token) ||
 		token == ',' || token == '}' {
 		if s.result == "" {
 			err = &shared.ErrSyntax{

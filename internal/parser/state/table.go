@@ -18,8 +18,8 @@ func (s *TableState) SetContext(ctx *shared.Context) {
 func (s *TableState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
 func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
-	// Ignore spaces and newline characters
-	if token == ' ' || token == '\n' {
+	// Ignore spaces
+	if shared.IsSpace(token) {
 		return s, true, nil
 	}
 
