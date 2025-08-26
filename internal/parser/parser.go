@@ -12,7 +12,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 	ctx := shared.NewContext()
 	currentState := state.NewState(ctx)
 
-	line, col := 1, 0
+	line, col := 1, 1
 	for {
 		r, _, err := reader.ReadRune()
 		if err == io.EOF {
@@ -38,6 +38,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		// unread the last rune when it was not processed
 		if !isProcessed {
 			_ = reader.UnreadRune()
+			col--
 		}
 		currentState = next
 	}
