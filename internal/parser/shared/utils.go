@@ -9,3 +9,13 @@ func IsAsciiLetter(r rune) bool {
 func IsAsciiDigit(r rune) bool {
 	return '0' <= r && r <= '9'
 }
+
+// IsNewline checks whether r is a newline character ('\n' or '\r').
+func IsNewline(r rune) bool {
+	return r == '\n' || r == '\r'
+}
+
+// IsWhitespace checks whether r is a whitespace character (' ', '\t').
+func IsWhitespace(r rune) bool {
+	return r == ' ' || r == '\t'
+}

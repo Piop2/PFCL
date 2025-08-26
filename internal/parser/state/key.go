@@ -26,10 +26,11 @@ func (s *KeyState) SetOnComplete(f shared.OnCompleteCallback) {
 
 func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// Ignore spaces
-	if token == ' ' {
+	if shared.IsWhitespace(token) {
 		return s, true, nil
 	}
 
+	// allow only letter, digit, and '='
 	if !shared.IsAsciiLetter(token) && !shared.IsAsciiDigit(token) && token != '=' {
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected result token: %s", string(token)),

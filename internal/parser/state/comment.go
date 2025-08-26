@@ -16,7 +16,7 @@ func (s *CommentState) SetContext(ctx *shared.Context) {
 func (s *CommentState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
 func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
-	if token != '\n' {
+	if !shared.IsNewline(token) {
 		return s, true, nil
 	}
 

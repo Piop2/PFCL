@@ -25,7 +25,7 @@ func (s *StringState) SetOnComplete(f shared.OnCompleteCallback) {
 }
 
 func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
-	if token == '\n' || token == '\r' {
+	if shared.IsNewline(token) {
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected string token: %s", string(token)),
 		}
