@@ -52,6 +52,10 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 		next = &NumberState{}
 		isProcessed = false
 
+	} else if token == '{' {
+		next = &ListState{}
+		isProcessed = true
+
 	} else {
 		err = &shared.ErrSyntax{
 			Message: fmt.Sprintf("unexpected token: %s", string(token)),
