@@ -2,7 +2,7 @@
 
 str = "BOINK" # This is string
 cool = true # ddd
-list = {true, 2, "d", {1, 3.4}}
+list = {true, 2, "d", {1, 3.4}, {}}
 
 [server] # This is Table
 ip = "127.0.0.1:3000"

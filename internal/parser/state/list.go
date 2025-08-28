@@ -51,12 +51,13 @@ func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, er
 		return s, true, nil
 	}
 
-	// commit
-	// allow empty array
+	// commit result
 	if token == '}' {
-		err = s.appendBuffer()
-		if err != nil {
-			return nil, true, err
+
+		// if buffer is nil     -> empty list
+		// if buffer is not nil ->  append the last buffered element
+		if s.buffer != nil {
+			_ = s.appendBuffer()
 		}
 
 		s.onComplete(s.result)
