@@ -47,7 +47,7 @@ func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, er
 	}
 
 	// ignore spaces
-	if shared.IsSpace(token) {
+	if shared.IsSpace(token) || shared.IsNewline(token) {
 		return s, true, nil
 	}
 
