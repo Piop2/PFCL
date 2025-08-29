@@ -47,7 +47,7 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 		next = &BoolState{}
 		isProcessed = false
 
-	} else if shared.IsAsciiDigit(token) {
+	} else if shared.IsAsciiDigit(token) || token == '-' {
 		// number value
 		next = &NumberState{}
 		isProcessed = false
