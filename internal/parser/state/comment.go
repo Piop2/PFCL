@@ -29,6 +29,10 @@ func (s *CommentState) Flush() (next shared.State, err shared.ErrPFCL) {
 	return
 }
 
+func (s *CommentState) Commit() shared.ErrPFCL {
+	panic("very big freakin' panic")
+}
+
 func (s *CommentState) IsParsing() bool {
 	return true
 }

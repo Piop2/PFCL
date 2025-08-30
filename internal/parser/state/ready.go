@@ -49,6 +49,10 @@ func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, e
 	return
 }
 
+func (s *ReadyState) Commit() shared.ErrPFCL {
+	panic("very big freakin' panic")
+}
+
 func (s *ReadyState) Flush() (shared.State, shared.ErrPFCL) {
 	panic("very big freakin' panic")
 }

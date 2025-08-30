@@ -60,7 +60,7 @@ func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, er
 			_ = s.appendBuffer()
 		}
 
-		s.onComplete(s.result)
+		_ = s.Commit()
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
@@ -75,6 +75,11 @@ func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, er
 	})
 
 	return next, false, nil
+}
+
+func (s *ListState) Commit() shared.ErrPFCL {
+	s.onComplete(s.result)
+	return nil
 }
 
 func (s *ListState) Flush() (next shared.State, err shared.ErrPFCL) {

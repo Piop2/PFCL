@@ -26,7 +26,7 @@ func (s *ValueState) SetOnComplete(f shared.OnCompleteCallback) {
 func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
 	// commit
 	if s.result != nil {
-		s.onComplete(s.result)
+		_ = s.Commit()
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, false, nil
@@ -72,6 +72,11 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 	})
 
 	return next, isProcessed, nil
+}
+
+func (s *ValueState) Commit() shared.ErrPFCL {
+	s.onComplete(s.result)
+	return nil
 }
 
 func (s *ValueState) Flush() (next shared.State, err shared.ErrPFCL) {

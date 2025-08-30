@@ -34,7 +34,7 @@ func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, 
 
 	// commit
 	if token == '"' {
-		s.onComplete(s.result)
+		_ = s.Commit()
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
@@ -42,6 +42,11 @@ func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, 
 
 	s.result += string(token)
 	return s, true, nil
+}
+
+func (s *StringState) Commit() shared.ErrPFCL {
+	s.onComplete(s.result)
+	return nil
 }
 
 func (s *StringState) Flush() (next shared.State, err shared.ErrPFCL) {

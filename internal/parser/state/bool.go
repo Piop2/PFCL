@@ -72,13 +72,18 @@ func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, er
 
 	// commit
 	if s.isChecking && !ok {
-		s.onComplete(s.value)
+		_ = s.Commit()
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
 	}
 
 	return s, true, nil
+}
+
+func (s *BoolState) Commit() shared.ErrPFCL {
+	s.onComplete(s.value)
+	return nil
 }
 
 func (s *BoolState) Flush() (next shared.State, err shared.ErrPFCL) {

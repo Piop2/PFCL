@@ -24,6 +24,7 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 		return s, true, nil
 	}
 
+	// commit
 	// the end of table declaration
 	if token == ']' {
 		// table declaration closed without a name
@@ -31,16 +32,10 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 			return nil, true, &shared.ErrSyntax{Message: "missing table name"}
 		}
 
-		table, err := s.ctx.TableAtCursor(s.nameStack.Data)
+		err = s.Commit()
 		if err != nil {
-			return nil, true, shared.ToErrPFCL(err)
+			return nil, true, err
 		}
-
-		// make new table
-		table[s.name] = map[string]any{}
-
-		// set cursor
-		s.ctx.Cursor = append(s.nameStack.Data, s.name)
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
@@ -57,6 +52,19 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 
 	s.name += string(token)
 	return s, true, nil
+}
+func (s *TableState) Commit() shared.ErrPFCL {
+	table, err := s.ctx.TableAtCursor(s.nameStack.Data)
+	if err != nil {
+		return shared.ToErrPFCL(err)
+	}
+
+	// make new table
+	table[s.name] = map[string]any{}
+
+	// set cursor
+	s.ctx.Cursor = append(s.nameStack.Data, s.name)
+	return nil
 }
 
 func (s *TableState) Flush() (next shared.State, err shared.ErrPFCL) {

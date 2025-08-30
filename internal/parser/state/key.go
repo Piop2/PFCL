@@ -47,15 +47,10 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 			return nil, true, err
 		}
 
-		table, _ := s.ctx.Table()
-		if table[s.result] != nil {
-			err = &shared.ErrSyntax{
-				Message: fmt.Sprintf("duplicate key \"%s\"", s.result),
-			}
+		err = s.Commit()
+		if err != nil {
 			return nil, true, err
 		}
-
-		s.onComplete(s.result)
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, true, nil
@@ -63,6 +58,19 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 
 	s.result += string(token)
 	return s, true, nil
+}
+
+func (s *KeyState) Commit() shared.ErrPFCL {
+	table, _ := s.ctx.Table()
+	if table[s.result] != nil {
+		err := &shared.ErrSyntax{
+			Message: fmt.Sprintf("duplicate key \"%s\"", s.result),
+		}
+		return err
+	}
+
+	s.onComplete(s.result)
+	return nil
 }
 
 func (s *KeyState) Flush() (next shared.State, err shared.ErrPFCL) {

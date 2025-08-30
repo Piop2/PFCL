@@ -19,13 +19,12 @@ func (s *ItemState) SetContext(ctx *shared.Context) {
 func (s *ItemState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
 func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+	// commit
 	if s.key != "" && s.value != nil {
-		table, err := s.ctx.Table()
+		err = s.Commit()
 		if err != nil {
-			return nil, true, shared.ToErrPFCL(err)
+			return nil, true, err
 		}
-
-		table[s.key] = s.value
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, false, nil
@@ -54,6 +53,16 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 
 	next.SetContext(s.ctx)
 	return next, false, nil
+}
+
+func (s *ItemState) Commit() shared.ErrPFCL {
+	table, err := s.ctx.Table()
+	if err != nil {
+		return shared.ToErrPFCL(err)
+	}
+
+	table[s.key] = s.value
+	return nil
 }
 
 func (s *ItemState) Flush() (next shared.State, err shared.ErrPFCL) {
