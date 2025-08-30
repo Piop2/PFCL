@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 
+	"github.com/piop2/pfcl/internal/parser/model"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -13,7 +14,7 @@ type BoolState struct {
 	value bool
 
 	isChecking bool
-	targets    shared.Queue[rune]
+	targets    model.Queue[rune]
 	buffer     rune
 }
 

@@ -1,4 +1,4 @@
-package shared
+package model
 
 // Stack is a generic LIFO stack.
 type Stack[T any] struct {

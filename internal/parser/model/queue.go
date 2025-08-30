@@ -1,4 +1,4 @@
-package shared
+package model
 
 // Queue is a generic FIFO queue.
 type Queue[T any] struct {

@@ -1,12 +1,16 @@
 package shared
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/piop2/pfcl/internal/parser/model"
+)
 
 // Context holds parsing results, state stack, and the current cursor path.
 type Context struct {
-	Result     map[string]any // Parsed Data as nested tables
-	StateStack Stack[State]   // Stack of active states
-	Cursor     []string       // Current table path
+	Result     map[string]any     // Parsed Data as nested tables
+	StateStack model.Stack[State] // Stack of active states
+	Cursor     []string           // Current table path
 }
 
 // Table returns the table at the current cursor.
@@ -31,7 +35,7 @@ func (c *Context) TableAtCursor(cursor []string) (table map[string]any, err erro
 func NewContext() *Context {
 	return &Context{
 		Result:     map[string]any{},
-		StateStack: Stack[State]{},
+		StateStack: model.Stack[State]{},
 		Cursor:     []string{},
 	}
 }

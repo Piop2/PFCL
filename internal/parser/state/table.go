@@ -1,13 +1,14 @@
 package state
 
 import (
+	"github.com/piop2/pfcl/internal/parser/model"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
 type TableState struct {
 	ctx       *shared.Context
 	name      string
-	nameStack shared.Stack[string]
+	nameStack model.Stack[string]
 }
 
 func (s *TableState) SetContext(ctx *shared.Context) {
