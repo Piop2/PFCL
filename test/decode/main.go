@@ -21,7 +21,9 @@ func main() {
 
 	decoder := pfcl.NewDecoderFromFile(file)
 
-	data, decodeErr := decoder.Decode()
+	data := make(map[string]any)
+
+	decodeErr := decoder.Decode(&data)
 	if decodeErr != nil {
 		panic(decodeErr)
 	}

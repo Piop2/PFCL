@@ -2,6 +2,8 @@ package pfcl
 
 import (
 	"bufio"
+	"bytes"
+	"errors"
 	"io"
 	"os"
 
@@ -12,8 +14,21 @@ type Decoder struct {
 	reader *bufio.Reader
 }
 
-func (decoder *Decoder) Decode() (map[string]any, error) {
-	return parser.Parse(decoder.reader)
+func (d *Decoder) Decode(v any) error {
+	m, err := parser.Parse(d.reader)
+	if err != nil {
+		return err
+	}
+
+	switch target := (v).(type) {
+	case *map[string]any:
+		*target = m
+
+	default:
+		return errors.New("v must be pointer to struct or *map[string]any")
+	}
+
+	return nil
 }
 
 // NewDecoder returns a new Decoder that reads from r
@@ -23,4 +38,8 @@ func NewDecoder(r io.Reader) *Decoder {
 
 func NewDecoderFromFile(f *os.File) *Decoder {
 	return NewDecoder(f)
+}
+
+func Unmarshal(data []byte, v *any) error {
+	return NewDecoder(bytes.NewReader(data)).Decode(v)
 }
