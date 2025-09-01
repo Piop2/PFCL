@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -41,12 +42,12 @@ func (s *NumberState) SetOnComplete(f shared.OnCompleteCallback) {
 	return
 }
 
-func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// commit
 	if shared.IsWhitespace(token) ||
 		token == ',' || token == '}' {
 		if s.result == "" {
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: "runtime error",
 			}
 			return nil, true, err
@@ -60,7 +61,7 @@ func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, 
 
 	// allowed characters: digits(0-9), dot(.), and minus(-)
 	if !shared.IsAsciiDigit(token) && token != '.' && token != '-' {
-		err = &shared.ErrSyntax{
+		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("invalid numeric character: '%c'", token),
 		}
 
@@ -73,7 +74,7 @@ func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, 
 		//
 		// invalid syntax
 		//if s.result == "" {
-		//	err = &shared.ErrSyntax{
+		//	err = &errors.ErrSyntax{
 		//		Message: "unexpected numeric character",
 		//	}
 		//	return nil, true, err
@@ -82,7 +83,7 @@ func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, 
 		// consecutive dots are not allowed (currently treated as syntax error).
 		// TODO: this should be changed later because of range parsing
 		if s.numberType == NumberFloat64 {
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: "unexpected numeric character",
 			}
 			return nil, true, err
@@ -94,14 +95,14 @@ func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, 
 	// negative sign
 	if token == '-' {
 		if s.signType == SignNegative {
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: "unexpected sign in number",
 			}
 			return nil, true, err
 		}
 
 		if s.result != "" {
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: "unexpected sign in number",
 			}
 			return nil, true, err
@@ -117,7 +118,7 @@ func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, 
 	return s, true, nil
 }
 
-func (s *NumberState) Commit() shared.ErrPFCL {
+func (s *NumberState) Commit() errors.ErrPFCL {
 	// apply negative sign if needed
 	if s.signType == SignNegative {
 		s.result = "-" + s.result
@@ -148,7 +149,7 @@ func (s *NumberState) Commit() shared.ErrPFCL {
 	return nil
 }
 
-func (s *NumberState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *NumberState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

@@ -1,6 +1,7 @@
 package state
 
 import (
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -22,9 +23,9 @@ func (s *ListState) SetOnComplete(f shared.OnCompleteCallback) {
 	return
 }
 
-func (s *ListState) appendBuffer() shared.ErrPFCL {
+func (s *ListState) appendBuffer() errors.ErrPFCL {
 	if s.buffer == nil {
-		err := &shared.ErrSyntax{
+		err := &errors.ErrSyntax{
 			Message: "duplicated ',' in list",
 		}
 		return err
@@ -35,7 +36,7 @@ func (s *ListState) appendBuffer() shared.ErrPFCL {
 	return nil
 }
 
-func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// append result
 	if token == ',' {
 		err = s.appendBuffer()
@@ -77,12 +78,12 @@ func (s *ListState) Process(token rune) (next shared.State, isProcessed bool, er
 	return next, false, nil
 }
 
-func (s *ListState) Commit() shared.ErrPFCL {
+func (s *ListState) Commit() errors.ErrPFCL {
 	s.onComplete(s.result)
 	return nil
 }
 
-func (s *ListState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *ListState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

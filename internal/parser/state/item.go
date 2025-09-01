@@ -1,6 +1,7 @@
 package state
 
 import (
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -18,7 +19,7 @@ func (s *ItemState) SetContext(ctx *shared.Context) {
 
 func (s *ItemState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// commit
 	if s.key != "" && s.value != nil {
 		err = s.Commit()
@@ -55,17 +56,17 @@ func (s *ItemState) Process(_ rune) (next shared.State, isProcessed bool, err sh
 	return next, false, nil
 }
 
-func (s *ItemState) Commit() shared.ErrPFCL {
+func (s *ItemState) Commit() errors.ErrPFCL {
 	table, err := s.ctx.Table()
 	if err != nil {
-		return shared.ToErrPFCL(err)
+		return errors.ToErrPFCL(err)
 	}
 
 	table[s.key] = s.value
 	return nil
 }
 
-func (s *ItemState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *ItemState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

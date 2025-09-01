@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -24,7 +25,7 @@ func (s *KeyState) SetOnComplete(f shared.OnCompleteCallback) {
 	return
 }
 
-func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// Ignore spaces
 	if shared.IsSpace(token) {
 		return s, true, nil
@@ -32,7 +33,7 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 
 	// allow only letter, digit, and '='
 	if !shared.IsAsciiLetter(token) && !shared.IsAsciiDigit(token) && token != '=' {
-		err = &shared.ErrSyntax{
+		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("unexpected result token: %s", string(token)),
 		}
 		return nil, true, err
@@ -41,7 +42,7 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 	// commit result
 	if token == '=' {
 		if s.result == "" {
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: "wat is this",
 			}
 			return nil, true, err
@@ -60,10 +61,10 @@ func (s *KeyState) Process(token rune) (next shared.State, isProcessed bool, err
 	return s, true, nil
 }
 
-func (s *KeyState) Commit() shared.ErrPFCL {
+func (s *KeyState) Commit() errors.ErrPFCL {
 	table, _ := s.ctx.Table()
 	if table[s.result] != nil {
-		err := &shared.ErrSyntax{
+		err := &errors.ErrSyntax{
 			Message: fmt.Sprintf("duplicate key \"%s\"", s.result),
 		}
 		return err
@@ -73,7 +74,7 @@ func (s *KeyState) Commit() shared.ErrPFCL {
 	return nil
 }
 
-func (s *KeyState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *KeyState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

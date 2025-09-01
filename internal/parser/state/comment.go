@@ -1,6 +1,7 @@
 package state
 
 import (
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -15,7 +16,7 @@ func (s *CommentState) SetContext(ctx *shared.Context) {
 
 func (s *CommentState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	if !shared.IsNewline(token) {
 		return s, true, nil
 	}
@@ -24,12 +25,12 @@ func (s *CommentState) Process(token rune) (next shared.State, isProcessed bool,
 	return next, true, nil
 }
 
-func (s *CommentState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *CommentState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }
 
-func (s *CommentState) Commit() shared.ErrPFCL {
+func (s *CommentState) Commit() errors.ErrPFCL {
 	panic("very big freakin' panic")
 }
 

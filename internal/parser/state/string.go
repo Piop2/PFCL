@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -24,9 +25,9 @@ func (s *StringState) SetOnComplete(f shared.OnCompleteCallback) {
 	return
 }
 
-func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	if shared.IsNewline(token) {
-		err = &shared.ErrSyntax{
+		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("unexpected string token: %s", string(token)),
 		}
 		return nil, true, err
@@ -44,12 +45,12 @@ func (s *StringState) Process(token rune) (next shared.State, isProcessed bool, 
 	return s, true, nil
 }
 
-func (s *StringState) Commit() shared.ErrPFCL {
+func (s *StringState) Commit() errors.ErrPFCL {
 	s.onComplete(s.result)
 	return nil
 }
 
-func (s *StringState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *StringState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

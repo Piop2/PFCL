@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 	"github.com/piop2/pfcl/internal/parser/state"
 )
@@ -56,7 +57,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 
 	// unexpected EOF during parsing
 	if currentState.IsParsing() {
-		return nil, &shared.ErrSyntax{Message: "unexpected EOF"}
+		return nil, &errors.ErrSyntax{Message: "unexpected EOF"}
 	}
 
 	return ctx.Result, nil

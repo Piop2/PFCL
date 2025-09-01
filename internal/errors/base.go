@@ -1,13 +1,6 @@
-package shared
+package errors
 
 import "fmt"
-
-// ErrPFCL is the common interface for all PFCL errors.
-type ErrPFCL interface {
-	SetMessage(message string)
-	SetPos(line int, col int)
-	Error() string
-}
 
 // ToErrPFCL converts a standard error into an ErrPFCL.
 // Returns nil if input error is nil.
@@ -28,16 +21,4 @@ func (e *BaseErr) SetMessage(msg string) { e.Message = msg }
 func (e *BaseErr) SetPos(line, col int)  { e.Pos = [2]int{line, col} }
 func (e *BaseErr) Error() string {
 	return fmt.Sprintf("[%d:%d] %s", e.Pos[0], e.Pos[1], e.Message)
-}
-
-// ErrSyntax represents a syntax error in parsing.
-type ErrSyntax struct {
-	Pos     [2]int
-	Message string
-}
-
-func (e *ErrSyntax) SetMessage(msg string) { e.Message = msg }
-func (e *ErrSyntax) SetPos(line, col int)  { e.Pos = [2]int{line, col} }
-func (e *ErrSyntax) Error() string {
-	return fmt.Sprintf("[%d:%d] syntax error: %s", e.Pos[0], e.Pos[1], e.Message)
 }

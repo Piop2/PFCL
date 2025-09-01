@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/model"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
@@ -28,7 +29,7 @@ func (s *BoolState) SetOnComplete(f shared.OnCompleteCallback) {
 	return
 }
 
-func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	if !s.isChecking {
 		s.isChecking = true
 
@@ -49,7 +50,7 @@ func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, er
 
 		} else {
 			// ERROR!
-			err = &shared.ErrSyntax{
+			err = &errors.ErrSyntax{
 				Message: fmt.Sprintf(""),
 			}
 			return nil, true, err
@@ -61,7 +62,7 @@ func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, er
 
 	if token != s.buffer {
 		// ERROR!
-		err = &shared.ErrSyntax{
+		err = &errors.ErrSyntax{
 			Message: "i thought it was bool",
 		}
 		return nil, true, err
@@ -81,12 +82,12 @@ func (s *BoolState) Process(token rune) (next shared.State, isProcessed bool, er
 	return s, true, nil
 }
 
-func (s *BoolState) Commit() shared.ErrPFCL {
+func (s *BoolState) Commit() errors.ErrPFCL {
 	s.onComplete(s.value)
 	return nil
 }
 
-func (s *BoolState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *BoolState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }

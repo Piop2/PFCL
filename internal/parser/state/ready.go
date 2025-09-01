@@ -3,6 +3,7 @@ package state
 import (
 	"fmt"
 
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
@@ -17,7 +18,7 @@ func (s *ReadyState) SetContext(ctx *shared.Context) {
 
 func (s *ReadyState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// Ignore spaces and newline characters
 	if shared.IsWhitespace(token) {
 		return s, true, nil
@@ -39,7 +40,7 @@ func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, e
 
 	} else {
 		// ERROR!
-		err = &shared.ErrSyntax{
+		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("unexpected token: \"%s\"", string(token)),
 		}
 		return
@@ -49,11 +50,11 @@ func (s *ReadyState) Process(token rune) (next shared.State, isProcessed bool, e
 	return
 }
 
-func (s *ReadyState) Commit() shared.ErrPFCL {
+func (s *ReadyState) Commit() errors.ErrPFCL {
 	panic("very big freakin' panic")
 }
 
-func (s *ReadyState) Flush() (shared.State, shared.ErrPFCL) {
+func (s *ReadyState) Flush() (shared.State, errors.ErrPFCL) {
 	panic("very big freakin' panic")
 }
 

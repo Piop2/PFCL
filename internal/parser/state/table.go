@@ -1,6 +1,7 @@
 package state
 
 import (
+	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/model"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
@@ -18,7 +19,7 @@ func (s *TableState) SetContext(ctx *shared.Context) {
 
 func (s *TableState) SetOnComplete(_ shared.OnCompleteCallback) {}
 
-func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, err shared.ErrPFCL) {
+func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// Ignore spaces
 	if shared.IsSpace(token) {
 		return s, true, nil
@@ -29,7 +30,7 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 	if token == ']' {
 		// table declaration closed without a name
 		if s.name == "" {
-			return nil, true, &shared.ErrSyntax{Message: "missing table name"}
+			return nil, true, &errors.ErrSyntax{Message: "missing table name"}
 		}
 
 		err = s.Commit()
@@ -42,7 +43,7 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 
 	} else if token == '.' {
 		if s.name == "" {
-			return nil, true, &shared.ErrSyntax{Message: "invalid table result: consecutive dots"}
+			return nil, true, &errors.ErrSyntax{Message: "invalid table result: consecutive dots"}
 		}
 
 		s.nameStack.Push(s.name)
@@ -53,10 +54,10 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 	s.name += string(token)
 	return s, true, nil
 }
-func (s *TableState) Commit() shared.ErrPFCL {
+func (s *TableState) Commit() errors.ErrPFCL {
 	table, err := s.ctx.TableAtCursor(s.nameStack.Data)
 	if err != nil {
-		return shared.ToErrPFCL(err)
+		return errors.ToErrPFCL(err)
 	}
 
 	// make new table
@@ -67,7 +68,7 @@ func (s *TableState) Commit() shared.ErrPFCL {
 	return nil
 }
 
-func (s *TableState) Flush() (next shared.State, err shared.ErrPFCL) {
+func (s *TableState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }
