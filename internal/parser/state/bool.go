@@ -3,7 +3,7 @@ package state
 import (
 	"fmt"
 
-	"github.com/piop2/pfcl/internal/parser/model"
+	"github.com/piop2/pfcl/internal/model"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 

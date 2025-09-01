@@ -3,7 +3,7 @@ package shared
 import (
 	"errors"
 
-	"github.com/piop2/pfcl/internal/parser/model"
+	"github.com/piop2/pfcl/internal/model"
 )
 
 // Context holds parsing results, state stack, and the current cursor path.
