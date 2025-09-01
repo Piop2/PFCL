@@ -54,8 +54,9 @@ func (s *TableState) Process(token rune) (next shared.State, isProcessed bool, e
 	s.name += string(token)
 	return s, true, nil
 }
+
 func (s *TableState) Commit() errors.ErrPFCL {
-	table, err := s.ctx.TableAtCursor(s.nameStack.Data)
+	table, err := s.ctx.TableAtCursor(s.nameStack.Items())
 	if err != nil {
 		return errors.ToErrPFCL(err)
 	}
@@ -64,7 +65,7 @@ func (s *TableState) Commit() errors.ErrPFCL {
 	table[s.name] = map[string]any{}
 
 	// set cursor
-	s.ctx.Cursor = append(s.nameStack.Data, s.name)
+	s.ctx.Cursor = append(s.nameStack.Items(), s.name)
 	return nil
 }
 
