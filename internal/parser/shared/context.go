@@ -1,9 +1,8 @@
 package shared
 
 import (
-	"errors"
-
 	"github.com/piop2/pfcl/internal/model"
+	"github.com/piop2/pfcl/internal/utils"
 )
 
 // Context holds parsing results, state stack, and the current cursor path.
@@ -20,15 +19,7 @@ func (c *Context) Table() (table map[string]any, err error) {
 
 // TableAtCursor returns the table at the specified cursor path.
 func (c *Context) TableAtCursor(cursor []string) (table map[string]any, err error) {
-	table = c.Result
-	for _, key := range cursor {
-		if nested, ok := table[key].(map[string]any); ok {
-			table = nested
-		} else {
-			return nil, errors.New("table name error")
-		}
-	}
-	return
+	return utils.GetTableAtCursor(c.Result, cursor)
 }
 
 // NewContext creates and initializes a new Context.
