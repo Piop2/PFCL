@@ -7,13 +7,12 @@ import (
 )
 
 type Encoder struct {
-	writer  io.Writer
-	indent  string
-	newline bool
+	writer io.Writer
+	indent string
 }
 
 func NewEncoder(w io.Writer) *Encoder {
-	return &Encoder{writer: w, indent: "    ", newline: true}
+	return &Encoder{writer: w, indent: "    "}
 }
 
 func (e *Encoder) SetIndent(indent string) *Encoder {
@@ -21,11 +20,6 @@ func (e *Encoder) SetIndent(indent string) *Encoder {
 	return e
 }
 
-func (e *Encoder) SetNewline(enable bool) *Encoder {
-	e.newline = enable
-	return e
-}
-
 func (e *Encoder) Encode(v map[string]any) error {
-	return formatter.Format(v, e.writer, e.indent, e.newline)
+	return formatter.Format(v, e.writer, e.indent)
 }
