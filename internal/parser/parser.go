@@ -44,8 +44,8 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		currentState = next
 	}
 
-	// flush remaining states when stack is empty
-	for !ctx.StateStack.IsEmpty() {
+	// flush remaining states
+	for i := 0; i < ctx.StateStack.Len()+1; i++ {
 		next, err := currentState.Flush()
 		if err != nil {
 			err.SetPos(line, col)
