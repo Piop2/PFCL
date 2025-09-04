@@ -1,6 +1,7 @@
 package pfcl
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/piop2/pfcl/internal/formatter"
@@ -22,4 +23,13 @@ func (e *Encoder) SetIndent(indent string) *Encoder {
 
 func (e *Encoder) Encode(v map[string]any) error {
 	return formatter.Format(v, e.writer, e.indent)
+}
+
+// Marshal encodes a map[string]any into bytes using Encoder
+func Marshal(v map[string]any) ([]byte, error) {
+	var buf bytes.Buffer
+	var writer io.Writer = &buf
+
+	err := NewEncoder(writer).Encode(v)
+	return buf.Bytes(), err
 }
