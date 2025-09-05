@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/piop2/pfcl"
 )
@@ -20,10 +20,21 @@ var MockData = map[string]any{
 }
 
 func main() {
-	b, err := pfcl.Marshal(MockData)
+	f, err := os.Create("save.pfcl")
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(string(b))
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(f)
+
+	encoder := pfcl.NewEncoder(f)
+	err = encoder.Encode(MockData)
+	if err != nil {
+		panic(err)
+	}
 }

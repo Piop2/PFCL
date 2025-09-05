@@ -28,7 +28,7 @@ func Format(v map[string]any, writer io.Writer, indent string) errors.ErrPFCL {
 		if len(cursor) != 0 {
 			_, err := writer.Write(
 				[]byte(
-					fmt.Sprintf("[%s]\n", strings.Join(cursor, ".")),
+					fmt.Sprintf("\n[%s]\n", strings.Join(cursor, ".")),
 				),
 			)
 			if err != nil {
@@ -101,10 +101,10 @@ func Format(v map[string]any, writer io.Writer, indent string) errors.ErrPFCL {
 		}
 
 		// newline
-		_, err := writer.Write([]byte("\n"))
-		if err != nil {
-			return errors.ToErrPFCL(err)
-		}
+		//_, err := writer.Write([]byte("\n"))
+		//if err != nil {
+		//	return errors.ToErrPFCL(err)
+		//}
 	}
 
 	return nil
