@@ -2,18 +2,12 @@ package state
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/piop2/pfcl/internal/errors"
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
 type NumberType int
-
-const (
-	NumberInt64 NumberType = iota
-	NumberFloat64
-)
 
 type SignType int
 
@@ -26,10 +20,8 @@ type NumberState struct {
 	ctx        *shared.Context
 	onComplete shared.OnCompleteCallback
 
-	// number value: int64 | float64
-	result     string
-	numberType NumberType
-	signType   SignType
+	// result type: int64 | float64
+	result any
 }
 
 func (s *NumberState) SetContext(ctx *shared.Context) {
@@ -44,108 +36,49 @@ func (s *NumberState) SetOnComplete(f shared.OnCompleteCallback) {
 
 func (s *NumberState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
 	// commit
-	if shared.IsWhitespace(token) ||
-		token == ',' || token == '}' {
-		if s.result == "" {
-			err = &errors.ErrSyntax{
-				Message: "runtime error",
-			}
-			return nil, true, err
-		}
-
+	if s.result != nil {
 		_ = s.Commit()
 
 		next, _ = s.ctx.StateStack.Pop()
 		return next, false, nil
 	}
 
-	// allowed characters: digits(0-9), dot(.), and minus(-)
-	if !shared.IsAsciiDigit(token) && token != '.' && token != '-' {
+	// ignore spaces
+	if shared.IsSpace(token) {
+		return s, true, nil
+	}
+
+	// allowed characters: digits(0-9), and minus(-)
+	if !shared.IsAsciiDigit(token) && token != '-' {
 		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("invalid numeric character: '%c'", token),
 		}
 
-		return nil, true, err
+		return nil, false, err
 	}
 
-	// float type
-	if token == '.' {
-		// THIS SHOULD NEVER HAPPEN
-		//
-		// invalid syntax
-		//if s.result == "" {
-		//	err = &errors.ErrSyntax{
-		//		Message: "unexpected numeric character",
-		//	}
-		//	return nil, true, err
-		//}
-
-		// consecutive dots are not allowed (currently treated as syntax error).
-		// TODO: this should be changed later because of range parsing
-		if s.numberType == NumberFloat64 {
-			err = &errors.ErrSyntax{
-				Message: "unexpected numeric character",
-			}
-			return nil, true, err
-		}
-
-		s.numberType = NumberFloat64
-	}
-
-	// negative sign
+	var signType SignType
 	if token == '-' {
-		if s.signType == SignNegative {
-			err = &errors.ErrSyntax{
-				Message: "unexpected sign in number",
-			}
-			return nil, true, err
-		}
-
-		if s.result != "" {
-			err = &errors.ErrSyntax{
-				Message: "unexpected sign in number",
-			}
-			return nil, true, err
-		}
-
-		s.signType = SignNegative
-
-		return s, true, nil
+		signType = SignNegative
+		isProcessed = true
+	} else {
+		signType = SignPositive
+		isProcessed = false
 	}
 
-	s.result += string(token)
+	s.ctx.StateStack.Push(s)
 
-	return s, true, nil
+	next = &IntState{signType: signType}
+	next.SetContext(s.ctx)
+	next.SetOnComplete(func(result any) {
+		s.result = result
+	})
+
+	return next, isProcessed, nil
 }
 
 func (s *NumberState) Commit() errors.ErrPFCL {
-	// apply negative sign if needed
-	if s.signType == SignNegative {
-		s.result = "-" + s.result
-	}
-
-	var value any
-	var convertErr error
-	switch s.numberType {
-	case NumberInt64:
-		// string to int64 convert
-		value, convertErr = strconv.ParseInt(s.result, 10, 64)
-		if convertErr != nil {
-			panic("failed to convert string to int64")
-		}
-
-	case NumberFloat64:
-		// string to float64 convert
-		value, convertErr = strconv.ParseFloat(s.result, 64)
-		if convertErr != nil {
-			panic("failed to convert string to float64")
-		}
-
-	default:
-		panic("invalid number type")
-	}
-
-	s.onComplete(value)
+	s.onComplete(s.result)
 	return nil
 }
 

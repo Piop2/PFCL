@@ -59,9 +59,9 @@ func (s *ValueState) Process(token rune) (next shared.State, isProcessed bool, e
 
 	} else {
 		err = &errors.ErrSyntax{
-			Message: fmt.Sprintf("unexpected token: %s", string(token)),
+			Message: fmt.Sprintf("unexpected token: %q", token),
 		}
-		return nil, true, err
+		return nil, false, err
 	}
 
 	s.ctx.StateStack.Push(s)

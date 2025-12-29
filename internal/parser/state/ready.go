@@ -55,7 +55,7 @@ func (s *ReadyState) Commit() errors.ErrPFCL {
 }
 
 func (s *ReadyState) Flush() (shared.State, errors.ErrPFCL) {
-	panic("very big freakin' panic")
+	return s, nil
 }
 
 func (s *ReadyState) IsParsing() bool {
