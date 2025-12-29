@@ -8,7 +8,7 @@ import (
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
-type IntState struct {
+type FloatState struct {
 	ctx        *shared.Context
 	onComplete shared.OnCompleteCallback
 
@@ -16,16 +16,19 @@ type IntState struct {
 	result   string
 }
 
-func (s *IntState) SetContext(ctx *shared.Context) {
+func (s *FloatState) SetContext(ctx *shared.Context) {
 	s.ctx = ctx
 }
 
-func (s *IntState) SetOnComplete(f shared.OnCompleteCallback) {
+func (s *FloatState) SetOnComplete(f shared.OnCompleteCallback) {
 	s.onComplete = f
 }
 
-func (s *IntState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) {
-	//commit
+func (s *FloatState) SetSignType(signType SignType) {
+	s.signType = signType
+}
+
+func (s *FloatState) Process(token rune) (next shared.State, isProcessed bool, err errors.ErrPFCL) { //commit
 	if shared.IsWhitespace(token) || token == ',' || token == '}' || token == 0 {
 		err = s.Commit()
 		if err != nil {
@@ -37,8 +40,8 @@ func (s *IntState) Process(token rune) (next shared.State, isProcessed bool, err
 		return next, false, nil
 	}
 
-	// allowed characters: digits(0-9), dot(.)
-	if !shared.IsAsciiDigit(token) && token != '.' {
+	// allowed characters: digits(0-9)
+	if !shared.IsAsciiDigit(token) {
 		err = &errors.ErrSyntax{
 			Message: fmt.Sprintf("invalid numeric character: %q", token),
 		}
@@ -48,28 +51,19 @@ func (s *IntState) Process(token rune) (next shared.State, isProcessed bool, err
 
 	s.result += string(token)
 
-	// floating point
-	if token == '.' {
-		next = &FloatState{signType: s.signType, result: s.result}
-		next.SetContext(s.ctx)
-		next.SetOnComplete(s.onComplete)
-
-		return next, true, nil
-	}
-
 	return s, true, nil
 }
 
-func (s *IntState) Commit() errors.ErrPFCL {
-	// string to int64 convert
-	result, convertErr := strconv.ParseInt(s.result, 10, 64)
+func (s *FloatState) Commit() errors.ErrPFCL {
+	// string to float64 convert
+	result, convertErr := strconv.ParseFloat(s.result, 64)
 	if s.signType == SignNegative {
 		result *= -1
 	}
 
 	if convertErr != nil {
 		return &errors.BaseErr{
-			Message: fmt.Sprintf("failed to convert string to int64: %s", s.result),
+			Message: fmt.Sprintf("failed to convert string to float64: %s", s.result),
 		}
 	}
 
@@ -77,11 +71,11 @@ func (s *IntState) Commit() errors.ErrPFCL {
 	return nil
 }
 
-func (s *IntState) Flush() (next shared.State, err errors.ErrPFCL) {
+func (s *FloatState) Flush() (next shared.State, err errors.ErrPFCL) {
 	next, _, err = s.Process(0) // give empty rune
 	return
 }
 
-func (s *IntState) IsParsing() bool {
+func (s *FloatState) IsParsing() bool {
 	return false
 }
