@@ -84,5 +84,5 @@ func (s *IntState) Flush() (next shared.State, err errors.ErrPFCL) {
 }
 
 func (s *IntState) IsParsing() bool {
-	return true
+	return false
 }

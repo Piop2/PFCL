@@ -25,7 +25,7 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 
 		if r == '\n' {
 			line++
-			col = 0
+			col = 1
 		} else {
 			col++
 		}
@@ -44,20 +44,24 @@ func Parse(reader *bufio.Reader) (data map[string]any, err error) {
 		currentState = next
 	}
 
+	// unexpected EOF during parsing
+	if currentState.IsParsing() {
+		return nil, &errors.ErrSyntax{Pos: [2]int{line, col}, Message: "unexpected EOF"}
+	}
+
 	// flush remaining states
-	for i := 0; i < ctx.StateStack.Len()+1; i++ {
+	for {
 		next, err := currentState.Flush()
 		if err != nil {
 			err.SetPos(line, col)
 			return nil, err
 		}
 
-		currentState = next
-	}
+		if next == currentState {
+			break
+		}
 
-	// unexpected EOF during parsing
-	if currentState.IsParsing() {
-		return nil, &errors.ErrSyntax{Message: "unexpected EOF"}
+		currentState = next
 	}
 
 	return ctx.Result, nil

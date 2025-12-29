@@ -72,5 +72,5 @@ func (s *ItemState) Flush() (next shared.State, err errors.ErrPFCL) {
 }
 
 func (s *ItemState) IsParsing() bool {
-	return true
+	return false
 }

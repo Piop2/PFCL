@@ -88,5 +88,5 @@ func (s *NumberState) Flush() (next shared.State, err errors.ErrPFCL) {
 }
 
 func (s *NumberState) IsParsing() bool {
-	return true
+	return false
 }
