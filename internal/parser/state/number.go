@@ -7,8 +7,6 @@ import (
 	"github.com/piop2/pfcl/internal/parser/shared"
 )
 
-type NumberType int
-
 type SignType int
 
 const (
